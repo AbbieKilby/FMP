@@ -5,31 +5,118 @@ using UnityEngine;
 
 public class BattleManager : MonoBehaviour
 {
-    public int playerHP = 100;
-    public int enemyHP = 50;
+    public Fighter player;
+    public Fighter enemy;
 
-    public TextMeshProUGUI battleText;
+    public TMP_Text playerHPText;
+    public TMP_Text enemyHPText;
 
-    public void AttackEnemy()
+    public void PlayerAttack()
     {
-        enemyHP -= 10;
+        // Player attacks
+        enemy.hp -= player.attack;
 
-        if (enemyHP <= 0)
+        UpdateHPText();
+
+        Debug.Log(player.fighterName + "You attacked!");
+        Debug.Log("Enemy HP: " + enemy.hp);
+
+        // Check if enemy lost
+        if (enemy.hp <= 0)
         {
-            battleText.text = "You Win!";
+            Debug.Log("You Win!");
             return;
         }
 
-        playerHP -= 5;
+        // Enemy attacks
+        player.hp -= enemy.attack;
 
-        battleText.text =
-            "You attacked!\n" +
-            "Enemy HP: " + enemyHP + "\n" +
-            "Player HP: " + playerHP;
+        UpdateHPText();
 
-        if (playerHP <= 0)
+        Debug.Log(enemy.fighterName + "Enemy attacked!");
+        Debug.Log("Player HP: " + player.hp);
+
+        // Check if player lost
+        if (player.hp <= 0)
         {
-            battleText.text = "You Lost!";
+            Debug.Log("You Lose!");
+        }
+    }
+
+       public void UpdateHPText()
+        {
+            playerHPText.text =
+                player.fighterName + "Your HP: " + player.hp;
+
+            enemyHPText.text =
+                enemy.fighterName + "Enemy HP: " + enemy.hp;
+        }
+
+        void Start()
+        {
+            UpdateHPText();
+        }
+
+        public void Tackle()
+    {
+        UseMove("Tackle", 10);
+    }
+
+    public void Scratch()
+    {
+        UseMove("Scratch", 15);
+    }
+
+    public void Bite()
+    {
+        UseMove("Bite", 25);
+    }
+
+    public void Heal()
+    {
+        player.hp += 25;
+
+        Debug.Log(player.fighterName + "You healed!");
+
+        UpdateHPText();
+
+        EnemyTurn();
+    }
+
+    void UseMove(string moveName, int damage)
+    {
+        enemy.hp -= damage;
+
+        Debug.Log(player.fighterName +
+                  "You used " +
+                  moveName + "!");
+
+        UpdateHPText();
+
+        if (enemy.hp <= 0)
+        {
+            Debug.Log("You Win!");
+            return;
+        }
+
+        EnemyTurn();
+    }
+
+    void EnemyTurn()
+    {
+        player.hp -= enemy.attack;
+
+        Debug.Log(enemy.fighterName +
+                  "Enemy attacked!");
+
+        UpdateHPText();
+
+        if (player.hp <= 0)
+        {
+            Debug.Log("You Lose!");
         }
     }
 }
+
+
+

@@ -1,53 +1,34 @@
 using UnityEngine;
 
-
 public class PlayerMovement : MonoBehaviour
-
 {
+    public float moveSpeed = 5f;
 
-    public float MovementSpeed = 1f;
+    private Rigidbody2D rb;
+    private Vector2 movement;
+    private SpriteRenderer sr;
 
-
-    private void Update()
-
+    void Start()
     {
-
-        //Left - Right Movement
-
-        var movementx = Input.GetAxis("Horizontal");
-
-        var movementy = Input.GetAxis("Vertical");
-
-        transform.position += new Vector3(movementx, movementy, 0) * Time.deltaTime * MovementSpeed;
-
-
-
-        //Crouching and shifting
-
-        if (Input.GetKey("left ctrl"))
-
-        {
-
-            MovementSpeed = 2;
-
-        }
-
-        else if (Input.GetKey("left shift"))
-
-        {
-
-            MovementSpeed = 10;
-
-        }
-
-        else
-
-        {
-
-            MovementSpeed = 5;
-
-        }
-
+        rb = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
     }
 
+    void Update()
+    {
+        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.y = Input.GetAxisRaw("Vertical");
+
+        movement = movement.normalized;
+
+        if (movement.x < 0)
+            sr.flipX = true;
+        else if (movement.x > 0)
+            sr.flipX = false;
+    }
+
+    void FixedUpdate()
+    {
+        rb.velocity = movement * moveSpeed;
+    }
 }
